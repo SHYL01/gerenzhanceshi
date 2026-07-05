@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShoneyL | Photographer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="gradient-field" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#hero" aria-label="ShoneyL home">
+        <span class="brand-mark">SL</span>
+        <span>ShoneyL</span>
+      </a>
+      <nav>
+        <a href="#hero">Home</a>
+        <a href="#intro">Intro</a>
+        <a href="#photography">Photography</a>
+        <a href="#motion">Motion</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main class="snap-page">
+      <section class="snap-section hero home-hero" id="hero" data-dot="0">
+        <video class="hero-bg-video" autoplay muted loop playsinline preload="metadata" id="heroVideo">
+          <source src="./assets/video/hero-web.mp4" type="video/mp4" />
+        </video>
+        <div class="hero-shade" aria-hidden="true"></div>
+        <div class="cursor-light" id="cursorLight"></div>
+        <div class="hero-copy">
+          <p class="eyebrow">Photographer / Visual Storyteller</p>
+          <h1>ShoneyL</h1>
+          <p class="lead">用严谨的画面秩序捕捉情绪深度，在城市、自然、人物与舞台光线之间建立自己的视觉语言。</p>
+        </div>
+      </section>
+
+      <section class="snap-section intro-screen" id="intro" data-dot="1">
+        <article class="glass intro-panel">
+          <img class="intro-halftone" src="./assets/ip/ip-halftone-green.png" alt="" aria-hidden="true" />
+          <div class="intro-identity">
+            <p class="intro-index">01 / INTRO</p>
+            <h2>动态影像<br />探索者</h2>
+            <p>深耕摄影与剪辑领域，不只满足于记录，更通过镜头调度、节奏控制与色彩叙事传达空间感知与情绪共鸣。</p>
+          </div>
+          <div class="intro-main-card">
+            <p class="eyebrow">Creative Mindset</p>
+            <h3>系统性审美逻辑</h3>
+            <p>以严谨的架构组织画面，在理性的秩序中寻找感性的视觉张力。擅长多维度解构创作需求，从底层策划到最终视觉呈现建立完整闭环。</p>
+            <div class="mini-stat-grid">
+              <span><b>24-ON</b>青年传媒中心</span>
+              <span><b>21-24</b>摄影社主理人</span>
+            </div>
+          </div>
+          <div class="intro-info-stack">
+            <div class="info-card">
+              <p class="eyebrow">Experience</p>
+              <h3>青年传媒中心</h3>
+              <p>深度参与校级重要活动现场，担任核心影像拍摄及视觉统筹，处理复杂环境下的创作任务。</p>
+            </div>
+            <div class="info-card">
+              <p class="eyebrow">Experience</p>
+              <h3>高中摄影社社长 / 官方视频号运营</h3>
+              <p>连续三年负责内容的策划、拍摄、剪辑与发布，打造多期校园视频，形成成熟的社团内容产出标准。</p>
+            </div>
+            <div class="info-card">
+              <p class="eyebrow">Softwares & Gear</p>
+              <div class="skill-grid">
+                <span>Photoshop</span>
+                <span>After Effects</span>
+                <span>Premiere</span>
+                <span>剪映</span>
+                <span>Blender</span>
+                <span>Maya</span>
+                <span>航拍运镜</span>
+                <span>稳定器调度</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="snap-section portfolio-screen" id="photography" data-dot="2">
+        <div class="screen-head">
+          <p class="eyebrow">Selected Photography</p>
+          <h2>摄影作品</h2>
+          <p>鼠标悬停暂停流动并放大，点击查看完整作品。</p>
+        </div>
+        <div class="flow-gallery" data-portfolio="photos" aria-label="ShoneyL 摄影作品流动画廊"></div>
+      </section>
+
+      <section class="snap-section portfolio-screen" id="motion" data-dot="3">
+        <div class="screen-head">
+          <p class="eyebrow">Motion Works</p>
+          <h2>剪辑作品</h2>
+        </div>
+        <div class="flow-gallery motion-flow" data-portfolio="motions" aria-label="ShoneyL 剪辑作品流动画廊"></div>
+      </section>
+
+      <section class="snap-section contact-screen" id="contact" data-dot="4">
+        <div class="glass contact-card">
+          <p class="eyebrow">Contact</p>
+          <h2>合作联系</h2>
+          <p>联系方式默认隐藏，点击后显示电话和微信。</p>
+          <button class="button primary" id="revealContact" type="button">显示联系方式</button>
+          <div class="contact-info" id="contactInfo" aria-live="polite" hidden>
+            <a href="tel:+8617513332981">电话：+86 17513332981</a>
+            <span>微信：shyl1074503892</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="portfolio-modal" id="portfolioModal" hidden>
+      <button class="modal-close" id="closeModal" type="button" aria-label="关闭作品">×</button>
+      <div class="modal-title" id="modalTitle" aria-live="polite"></div>
+      <div class="modal-stage" id="modalStage"></div>
+    </div>
+
+    <div class="dot-progress" aria-label="页面进度">
+      <a class="dot is-active" href="#hero" aria-label="头图"></a>
+      <a class="dot" href="#intro" aria-label="个人简介"></a>
+      <a class="dot" href="#photography" aria-label="摄影作品"></a>
+      <a class="dot" href="#motion" aria-label="剪辑作品"></a>
+      <a class="dot" href="#contact" aria-label="联系方式"></a>
+    </div>
+
+    <script src="./portfolio-data.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

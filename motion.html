@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Motion | ShoneyL</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="gradient-field" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="ShoneyL home">
+        <span class="brand-mark">SL</span>
+        <span>ShoneyL</span>
+      </a>
+      <nav>
+        <a href="./index.html">Home</a>
+        <a href="./photography.html">Photography</a>
+        <a href="./motion.html">Motion</a>
+      </nav>
+    </header>
+
+    <main class="portfolio-page">
+      <section class="portfolio-hero">
+        <p class="eyebrow">Motion Works</p>
+        <h1>剪辑作品</h1>
+        <p>完整剪辑作品以从右向左流动的视频墙展示。悬停暂停并放大预览，点击后播放完整视频。</p>
+      </section>
+
+      <section class="flow-gallery motion-flow" data-portfolio="motions" aria-label="ShoneyL 剪辑作品流动画廊"></section>
+    </main>
+
+    <div class="portfolio-modal" id="portfolioModal" hidden>
+      <button class="modal-close" id="closeModal" type="button" aria-label="关闭作品">×</button>
+      <div class="modal-stage" id="modalStage"></div>
+      <p id="modalCaption"></p>
+    </div>
+
+    <div class="page-progress" aria-hidden="true"><span id="pageProgress"></span></div>
+    <script src="./portfolio-data.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
