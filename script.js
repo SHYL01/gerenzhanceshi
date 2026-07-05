@@ -6,6 +6,19 @@ const revealButton = document.getElementById("revealContact");
 const contactInfo = document.getElementById("contactInfo");
 const dots = [...document.querySelectorAll(".dot-progress .dot")];
 const introPanel = document.querySelector(".intro-panel");
+const loader = document.getElementById("siteLoader");
+const sections = [...document.querySelectorAll(".snap-section")];
+const isCoarsePointer = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+
+function finishLoading() {
+  document.body.classList.remove("is-loading");
+}
+
+window.addEventListener("load", () => {
+  window.setTimeout(finishLoading, 220);
+});
+
+window.setTimeout(finishLoading, 1800);
 
 if (heroCard && cursorLight) {
   heroCard.addEventListener("pointermove", (event) => {
@@ -45,42 +58,6 @@ if (revealButton && contactInfo) {
   });
 }
 
-const sections = [...document.querySelectorAll(".snap-section")];
-let snapTimer;
-let isSnapping = false;
-let lastInputAt = 0;
-
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
-
-function slowScrollTo(targetY, duration = 1750) {
-  const startY = window.scrollY;
-  const distance = targetY - startY;
-  if (Math.abs(distance) < 2) return;
-  const start = performance.now();
-  isSnapping = true;
-
-  function step(now) {
-    const elapsed = Math.min(1, (now - start) / duration);
-    window.scrollTo(0, startY + distance * easeInOutCubic(elapsed));
-    if (elapsed < 1) {
-      requestAnimationFrame(step);
-    } else {
-      isSnapping = false;
-    }
-  }
-
-  requestAnimationFrame(step);
-}
-
-function snapToNearestSection() {
-  if (!sections.length || isSnapping || modal?.hasAttribute("hidden") === false) return;
-  if (Date.now() - lastInputAt < 520) return;
-  const index = Math.max(0, Math.min(sections.length - 1, Math.round(window.scrollY / window.innerHeight)));
-  slowScrollTo(index * window.innerHeight, 1750);
-}
-
 function setActiveDot(index) {
   dots.forEach((dot, dotIndex) => dot.classList.toggle("is-active", dotIndex === index));
 }
@@ -98,26 +75,10 @@ if (sections.length && dots.length) {
   );
   sections.forEach((section) => sectionObserver.observe(section));
 
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (isSnapping) return;
-      window.clearTimeout(snapTimer);
-      snapTimer = window.setTimeout(snapToNearestSection, 560);
-    },
-    { passive: true }
-  );
-
-  ["wheel", "touchmove", "keydown"].forEach((eventName) => {
-    window.addEventListener(eventName, () => {
-      lastInputAt = Date.now();
-    }, { passive: true });
-  });
-
   dots.forEach((dot, index) => {
     dot.addEventListener("click", (event) => {
       event.preventDefault();
-      slowScrollTo(index * window.innerHeight, 1500);
+      sections[index]?.scrollIntoView({ behavior: "smooth", block: "start" });
       setActiveDot(index);
     });
   });
@@ -128,7 +89,7 @@ if (sections.length && dots.length) {
       if (!target || !target.classList.contains("snap-section")) return;
       event.preventDefault();
       const index = sections.indexOf(target);
-      slowScrollTo(index * window.innerHeight, 1500);
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
       setActiveDot(index);
     });
   });
@@ -209,13 +170,18 @@ function makePortfolioCard(item, index) {
   button.setAttribute("aria-label", `查看 ${item.title}`);
 
   const media = item.type === "video" ? document.createElement("video") : document.createElement("img");
-  media.src = item.thumb;
   media.alt = item.title;
   if (item.type === "video") {
     media.muted = true;
     media.loop = true;
     media.playsInline = true;
-    media.preload = "metadata";
+    media.preload = isCoarsePointer ? "none" : "metadata";
+    media.src = item.thumb;
+  } else {
+    media.loading = "lazy";
+    media.decoding = "async";
+    media.fetchPriority = "low";
+    media.src = item.thumb;
   }
 
   const label = document.createElement("span");
@@ -252,7 +218,18 @@ function clonePortfolioCard(card, items) {
   return clone;
 }
 
-document.querySelectorAll(".flow-gallery").forEach((gallery) => {
+function scheduleIdle(callback) {
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(callback, { timeout: 1200 });
+  } else {
+    window.setTimeout(callback, 120);
+  }
+}
+
+function buildFlowGallery(gallery) {
+  if (gallery.dataset.ready === "true") return;
+  gallery.dataset.ready = "true";
+
   const kind = gallery.dataset.portfolio;
   const items = kind === "motions" ? window.SHONEYL_MOTIONS : window.SHONEYL_PHOTOS;
   if (!Array.isArray(items)) return;
@@ -274,16 +251,40 @@ document.querySelectorAll(".flow-gallery").forEach((gallery) => {
   const rows = [document.createElement("div"), document.createElement("div"), document.createElement("div")];
   rows.forEach((row, rowIndex) => {
     row.className = "flow-row";
-    row.style.setProperty("--duration", `${kind === "motions" ? 36 : 62 + rowIndex * 7}s`);
-    row.style.setProperty("--offset", `${rowIndex * -120}px`);
+    row.style.setProperty("--duration", `${kind === "motions" ? 42 : 68 + rowIndex * 8}s`);
+    row.style.setProperty("--offset", `${rowIndex * (isCoarsePointer ? -72 : -120)}px`);
     gallery.appendChild(row);
   });
 
-  items.forEach((item, index) => {
+  const initialItems = isCoarsePointer && kind === "photos" ? items.slice(0, 30) : items;
+  const remainingItems = isCoarsePointer && kind === "photos" ? items.slice(30) : [];
+
+  initialItems.forEach((item, index) => {
     rows[index % rows.length].appendChild(makePortfolioCard(item, index));
   });
 
-  rows.forEach((row) => {
+  function setupRows() {
+    rows.forEach((row) => {
+      fillFlowRow(row, items);
+    });
+  }
+
+  function appendRemaining() {
+    if (!remainingItems.length) return;
+    rows.forEach((row) => {
+      row.querySelectorAll(".is-loop-clone").forEach((clone) => clone.remove());
+    });
+    remainingItems.forEach((item, index) => {
+      rows[(initialItems.length + index) % rows.length].appendChild(makePortfolioCard(item, initialItems.length + index));
+    });
+    setupRows();
+  }
+
+  setupRows();
+  if (remainingItems.length) scheduleIdle(appendRemaining);
+}
+
+function fillFlowRow(row, items) {
     const originals = [...row.children];
 
     function fillLoop() {
@@ -316,6 +317,28 @@ document.querySelectorAll(".flow-gallery").forEach((gallery) => {
 
     fillLoop();
     window.addEventListener("resize", fillLoop, { passive: true });
-  });
-});
+}
+
+const galleries = [...document.querySelectorAll(".flow-gallery")];
+
+if ("IntersectionObserver" in window) {
+  const galleryObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        buildFlowGallery(entry.target);
+        observer.unobserve(entry.target);
+      });
+    },
+    { rootMargin: "420px 0px" }
+  );
+  galleries.forEach((gallery) => galleryObserver.observe(gallery));
+} else {
+  galleries.forEach(buildFlowGallery);
+}
+
+if (location.hash) {
+  const hashTarget = document.querySelector(location.hash);
+  hashTarget?.querySelectorAll(".flow-gallery").forEach(buildFlowGallery);
+}
 

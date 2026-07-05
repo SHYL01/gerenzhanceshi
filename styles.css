@@ -26,6 +26,10 @@ body {
   overflow-x: hidden;
 }
 
+body.is-loading {
+  overflow: hidden;
+}
+
 a { color: inherit; text-decoration: none; }
 
 img, video { display: block; max-width: 100%; }
@@ -54,6 +58,67 @@ img, video { display: block; max-width: 100%; }
     linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
   background-size: 42px 42px;
   mask-image: linear-gradient(to bottom, #000, transparent 88%);
+}
+
+.site-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: grid;
+  place-items: center;
+  gap: 24px;
+  align-content: center;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(184,255,24,0.22), transparent 30%),
+    linear-gradient(135deg, #030603, #050805 58%, #000);
+  transition: opacity 420ms ease, visibility 420ms ease;
+}
+
+body:not(.is-loading) .site-loader {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader-mark {
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 74px;
+  border: 1px solid rgba(184,255,24,0.5);
+  border-radius: 24px;
+  color: #071005;
+  background: var(--green);
+  font-size: 24px;
+  font-weight: 1000;
+  box-shadow: 0 0 52px rgba(184,255,24,0.34);
+  animation: loader-pulse 1.1s ease-in-out infinite alternate;
+}
+
+.loader-line {
+  overflow: hidden;
+  width: min(220px, 58vw);
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(184,255,24,0.16);
+}
+
+.loader-line span {
+  display: block;
+  width: 42%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, var(--green), #fff);
+  animation: loader-scan 1.15s ease-in-out infinite;
+}
+
+@keyframes loader-pulse {
+  to { transform: translateY(-4px) scale(1.04); filter: saturate(1.18); }
+}
+
+@keyframes loader-scan {
+  from { transform: translateX(-105%); }
+  to { transform: translateX(245%); }
 }
 
 @keyframes flow {
@@ -120,7 +185,9 @@ main {
 
 .snap-section {
   position: relative;
-  height: 100svh;
+  min-height: 100svh;
+  height: auto;
+  isolation: isolate;
 }
 
 .snap-section::before {
@@ -130,9 +197,10 @@ main {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 18% 18%, rgba(184,255,24,0.13), transparent 28%),
-    linear-gradient(to bottom, rgba(5,8,5,0.08), rgba(5,8,5,0.46));
-  opacity: 0.74;
+    radial-gradient(circle at 18% 18%, rgba(184,255,24,0.12), transparent 30%),
+    radial-gradient(circle at 78% 72%, rgba(92,255,77,0.08), transparent 28%),
+    linear-gradient(to bottom, rgba(5,8,5,0.1), rgba(5,8,5,0.28));
+  opacity: 0.78;
 }
 
 .snap-section + .snap-section::after {
@@ -140,13 +208,15 @@ main {
   position: absolute;
   left: 0;
   right: 0;
-  top: -24vh;
+  top: -30vh;
   z-index: 1;
-  height: 34vh;
+  height: 48vh;
   pointer-events: none;
+  filter: blur(10px);
   background:
-    radial-gradient(circle at 50% 0%, rgba(184,255,24,0.16), transparent 46%),
-    linear-gradient(180deg, rgba(4,8,4,0), rgba(4,8,4,0.94) 58%, rgba(4,8,4,0));
+    radial-gradient(ellipse at 50% 8%, rgba(184,255,24,0.18), transparent 44%),
+    radial-gradient(ellipse at 22% 48%, rgba(92,255,77,0.1), transparent 36%),
+    linear-gradient(180deg, rgba(4,8,4,0), rgba(4,8,4,0.72) 42%, rgba(4,8,4,0));
 }
 
 .hero {
@@ -1075,28 +1145,147 @@ figcaption {
 }
 
 @media (max-width: 760px) {
+  body {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(184,255,24,0.18), transparent 28%),
+      linear-gradient(180deg, #020402, #050805 32%, #030603);
+  }
+
+  .gradient-field {
+    inset: -14%;
+    filter: blur(26px) saturate(1.08);
+    animation-duration: 24s;
+  }
+
+  .grain {
+    opacity: 0.15;
+    background-size: 34px 34px;
+  }
+
+  .site-header {
+    top: 10px;
+    width: calc(100% - 18px);
+    padding: 8px;
+    border-radius: 22px;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
+  nav {
+    gap: 2px;
+    overflow-x: auto;
+    max-width: calc(100vw - 120px);
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  nav a {
+    flex: 0 0 auto;
+    padding: 8px 9px;
+    font-size: 12px;
+  }
+
+  .snap-section {
+    min-height: auto;
+  }
+
+  .snap-section + .snap-section::after {
+    top: -20vh;
+    height: 34vh;
+    filter: blur(16px);
+    opacity: 0.88;
+  }
+
+  .hero {
+    min-height: 100svh;
+    padding: 96px 18px 76px;
+  }
+
+  .hero-bg-video {
+    transform: none !important;
+    filter: saturate(1.02) contrast(1.02);
+  }
+
+  .cursor-light {
+    display: none;
+  }
+
+  .hero-copy {
+    transform: none !important;
+  }
+
+  h1 {
+    font-size: clamp(54px, 18vw, 86px);
+  }
+
+  .lead,
+  .hero .lead {
+    font-size: 15px;
+    line-height: 1.72;
+  }
+
   .portfolio-page { padding-top: 108px; }
   .flow-gallery { gap: 16px; }
   .flow-row { gap: 12px; }
-  .flow-card { flex-basis: 210px; height: 230px; border-radius: 22px; }
-  .motion-flow .flow-card { flex-basis: 250px; height: 170px; }
+  .flow-card { flex-basis: 196px; height: 214px; border-radius: 22px; }
+  .motion-flow .flow-card { flex-basis: 230px; height: 154px; }
   .flow-card:hover { transform: rotate(0deg) scale(1.05); }
-  .portfolio-screen { padding-top: 280px; }
+  .portfolio-screen {
+    min-height: 100svh;
+    align-content: center;
+    padding: 222px 0 92px;
+  }
   .screen-head { top: 92px; }
-  .screen-head h2 { font-size: 42px; }
+  .screen-head h2 { font-size: clamp(38px, 12vw, 56px); }
+  .screen-head p:last-child {
+    font-size: 13px;
+    line-height: 1.45;
+  }
   .modal-title { max-width: calc(100vw - 88px); font-size: 16px; }
-  .intro-screen { padding-top: 92px; }
+  .intro-screen {
+    padding: 96px 14px 70px;
+    overflow: visible;
+  }
   .intro-panel {
     grid-template-columns: 1fr;
     min-height: auto;
-    max-height: calc(100svh - 116px);
-    overflow: auto;
+    max-height: none;
+    overflow: hidden;
     padding: 18px;
+    border-radius: 24px;
   }
   .intro-main-card { min-height: auto; padding: 22px; }
-  .intro-halftone { left: auto; right: -44px; bottom: -112px; width: 250px; opacity: 0.2; }
+  .intro-halftone { left: auto; right: -52px; bottom: -118px; width: 250px; opacity: 0.18; }
   .mini-stat-grid { grid-template-columns: 1fr; }
   .skill-grid span { font-size: 13px; padding: 9px 11px; }
+
+  .contact-screen {
+    min-height: 92svh;
+    padding: 96px 16px 92px;
+  }
+
+  .contact-card {
+    border-radius: 24px;
+  }
+
+  .dot-progress {
+    bottom: 12px;
+    gap: 11px;
+    padding: 9px 11px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+  }
 }
 
 @media (max-width: 1180px) {
@@ -1286,13 +1475,13 @@ figcaption {
     opacity: 0.16;
   }
   .portfolio-screen {
-    padding-top: 320px;
+    padding-top: 222px;
   }
   .flow-card {
-    height: clamp(148px, 17vh, 190px);
+    height: clamp(150px, 18vh, 190px);
   }
   .motion-flow .flow-card {
-    height: clamp(126px, 15vh, 170px);
+    height: clamp(126px, 15vh, 160px);
   }
 }
 
@@ -1307,5 +1496,38 @@ figcaption {
   .info-card p {
     font-size: 13px;
     line-height: 1.42;
+  }
+
+  .portfolio-screen {
+    padding-top: 222px;
+  }
+
+  .flow-gallery {
+    gap: 12px;
+  }
+
+  .flow-row {
+    gap: 10px;
+  }
+
+  .flow-card {
+    flex-basis: 176px;
+    height: 202px;
+  }
+
+  .motion-flow .flow-card {
+    flex-basis: 210px;
+    height: 140px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
   }
 }
